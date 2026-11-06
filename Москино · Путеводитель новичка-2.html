@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Москино · Путеводитель новичка</title>
+<style>
+:root{--bg:#f5f6f8;--card:#fff;--ink:#16202b;--mut:#66727f;--acc:#1f5eff;--ok:#2e9d6a;--line:#dde2e8;--pt:#9aa5b1;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1419;--card:#18202a;--ink:#eef2f6;--mut:#93a0ad;--acc:#5b8cff;--ok:#43c08a;--line:#2a3541;--pt:#5d6b79}}
+:root[data-theme="dark"]{--bg:#0f1419;--card:#18202a;--ink:#eef2f6;--mut:#93a0ad;--acc:#5b8cff;--ok:#43c08a;--line:#2a3541;--pt:#5d6b79}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;justify-content:center}
+.app{width:100%;max-width:480px;padding:16px 16px 96px}
+h1{font-size:22px;margin:2px 0 2px}
+.sub{color:var(--mut);font-size:14px;margin:0 0 12px}
+.bar{height:8px;background:var(--line);border-radius:8px;overflow:hidden;margin:6px 0 4px}
+.bar i{display:block;height:100%;background:var(--ok);transition:.3s}
+.cnt{font-size:13px;color:var(--mut);margin-bottom:12px}
+.map{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.map svg{display:block;width:100%;height:auto}
+.pt{cursor:pointer}
+.pt circle{fill:var(--pt);stroke:var(--card);stroke-width:3}
+.pt.done circle{fill:var(--ok)}
+.pt.next circle{fill:var(--acc)}
+.pt.sel circle{stroke:var(--ink)}
+.pt text{fill:#fff;font:700 13px system-ui;text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.you{fill:var(--acc);opacity:.18}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:12px}
+.card h2{margin:0 0 2px;font-size:18px}
+.lab{font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:var(--mut);margin:14px 0 6px}
+.chip{display:inline-block;font-size:12px;border-radius:20px;padding:2px 9px;background:var(--bg);color:var(--mut);border:1px solid var(--line)}
+.chip.go{background:var(--acc);color:#fff;border-color:var(--acc);font-weight:600;cursor:pointer}
+.task{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;background:none;border:0;color:inherit;font:inherit;padding:8px 0;cursor:pointer}
+.task+.task{border-top:1px solid var(--line)}
+.chk{flex:none;width:22px;height:22px;border-radius:6px;border:2px solid var(--mut);display:grid;place-items:center;color:transparent;font-size:13px;margin-top:1px}
+.task.done .chk{background:var(--ok);border-color:var(--ok);color:#fff}
+.task.done .tt{color:var(--mut);text-decoration:line-through}
+.td{font-size:13px;color:var(--mut)}
+.per{display:flex;gap:12px;align-items:center;padding:8px 0}
+.av{flex:none;width:42px;height:42px;border-radius:50%;background:var(--acc);color:#fff;display:grid;place-items:center;font-weight:700;font-size:14px}
+.ask{font-size:13px;color:var(--mut)}
+.tag{font-size:11px;color:var(--acc);font-weight:600}
+.qr{font-size:12px;color:var(--mut);margin-top:12px;border-top:1px dashed var(--line);padding-top:10px}
+.qr a{color:var(--acc)}
+.grp{font-size:13px;font-weight:700;color:var(--mut);margin:18px 0 6px;text-transform:uppercase;letter-spacing:.8px}
+.item{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px 12px;margin-bottom:8px}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;justify-content:center;padding-bottom:env(safe-area-inset-bottom,0px)}
+nav div{display:flex;width:100%;max-width:480px}
+nav button{flex:1;background:none;border:0;color:var(--mut);padding:10px 4px 12px;font:600 12px system-ui;cursor:pointer}
+nav button .i{display:block;font-size:20px}
+nav button.on{color:var(--acc)}
+.toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:20px;font-size:14px;opacity:0;pointer-events:none;transition:.3s;white-space:nowrap}
+.toast.show{opacity:1}
+.demo{font-size:11px;color:var(--mut);text-align:center;margin-top:22px}
+.start{position:fixed;inset:0;z-index:50;background:linear-gradient(160deg,#10223f 0%,#1f5eff 60%,#7aa2ff 100%);color:#fff;display:flex;justify-content:center;overflow:auto;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+.start .in{width:100%;max-width:480px;min-height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:32px 24px}
+.logo{font:800 14px system-ui;letter-spacing:4px;opacity:.9}
+.start h2{font-size:36px;line-height:1.1;margin:0 0 8px}
+.start p{margin:0;opacity:.85}
+.facts{margin:24px 0;background:rgba(255,255,255,.14);border-radius:14px;padding:6px 14px}
+.facts div{display:flex;justify-content:space-between;gap:12px;padding:10px 0;font-size:15px}
+.facts div+div{border-top:1px solid rgba(255,255,255,.2)}
+.startbtn{width:100%;background:#fff;color:#16202b;border:0;border-radius:14px;padding:16px;font:700 17px system-ui;cursor:pointer}
+.ph{font-size:11px;opacity:.7;text-align:center;margin-top:10px}
+.tl{border-left:2px solid var(--line);margin:8px 0 0 6px;padding-left:16px}
+.tl div{position:relative;margin-bottom:16px}
+.tl div:before{content:"";position:absolute;left:-23px;top:5px;width:12px;height:12px;border-radius:50%;background:var(--acc)}
+.tl b{display:block}
+.nums{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.nums div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}
+.nums b{display:block;font-size:20px;color:var(--acc)}
+.nums span{font-size:12px;color:var(--mut)}
+.top{background:var(--acc);color:#fff;border-radius:12px;padding:12px;text-align:center}
+.line{width:2px;height:16px;background:var(--line);margin:0 auto}
+.dep{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.dep>div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px}
+.dep .me{border-color:var(--acc)}
+.dep b{font-size:14px;display:block}
+details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:8px}
+summary{font-weight:600;cursor:pointer}
+details p{margin:8px 0 0;font-size:14px;color:var(--mut)}
+nav button{font-size:11px;padding-left:0;padding-right:0}
+.srch{margin-bottom:10px}
+.srch input{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font:inherit}
+.sg{display:block;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);color:var(--ink);padding:10px 12px;font:inherit;cursor:pointer;margin-top:4px;border-radius:10px}
+.rt{display:grid;grid-template-columns:1fr auto 1fr;gap:6px;align-items:center;margin-bottom:10px}
+.rt select{width:100%;min-width:0;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font:inherit;font-size:14px}
+.rt .btn2{grid-column:1/-1}
+.btn2{background:var(--acc);color:#fff;border:0;border-radius:10px;padding:10px 14px;font:600 14px system-ui;cursor:pointer}
+.btn2.alt{background:var(--bg);color:var(--ink);border:1px solid var(--line)}
+.card ol{margin:8px 0;padding-left:20px;font-size:14px;color:var(--mut)}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="app">
+
+<section id="s-map">
+  <h1>Добро пожаловать, Анна</h1>
+  <p class="sub">Кинопарк «Москино» · экскурсионный отдел · ваш маршрут по территории</p>
+  <div class="bar"><i id="bar"></i></div>
+  <div class="cnt" id="cnt"></div>
+  <div class="srch"><input id="q" type="search" placeholder="Найти место: столовая, пропуск, наставник…" autocomplete="off"><div id="sug"></div></div>
+  <div class="rt"><select id="from" aria-label="Откуда"></select><span>→</span><select id="to" aria-label="Куда"></select><button class="btn2" id="rtb">🧭 Построить маршрут</button></div>
+  <div class="map">
+    <svg viewBox="0 0 400 300" role="img" aria-label="Схема территории">
+      <path d="M30 150 H370 M200 30 V270 M95 90 L200 150 M305 230 L200 150 M320 90 L200 150" stroke="var(--line)" stroke-width="10" fill="none" stroke-linecap="round"/>
+      <circle id="you" class="you" cx="200" cy="270" r="22"/>
+      <g id="rline"></g><g id="pts"></g>
+    </svg>
+  </div>
+  <div id="rinfo"></div>
+  <div class="card" id="detail"></div>
+</section>
+
+<section id="s-plan" hidden>
+  <h1>Мой план</h1>
+  <p class="sub">Все задачи привязаны к местам. Нажмите на место, чтобы увидеть его на карте.</p>
+  <div id="plan"></div>
+</section>
+
+<section id="s-team" hidden>
+  <h1>Команда</h1>
+  <p class="sub">С каким вопросом к кому идти</p>
+  <div id="team"></div>
+</section>
+
+<section id="s-about" hidden>
+  <h1>О Москино</h1>
+  <p class="sub">История и устройство Кинопарка</p>
+  <div class="nums"><div><b>XX</b><span>павильонов</span></div><div><b>XX</b><span>га территории</span></div><div><b>XX</b><span>сотрудников</span></div></div>
+  <div class="grp">История</div>
+  <div class="tl">
+    <div><b>Основание</b><span class="td">Как и зачем появился Кинопарк, кто стоял у истоков.</span></div>
+    <div><b>Первые проекты</b><span class="td">Первые съёмки, экскурсии и события на территории.</span></div>
+    <div><b>Рост и развитие</b><span class="td">Новые павильоны, направления и партнёры.</span></div>
+    <div><b>Сегодня</b><span class="td">Чем живёт Москино сейчас и куда движется.</span></div>
+  </div>
+  <div class="grp">Как устроено управление</div>
+  <div class="top"><b>Генеральный директор</b><div class="ask" style="color:#fff;opacity:.85">Имя Фамилия</div></div>
+  <div class="line"></div>
+  <div class="dep">
+    <div class="me"><span class="tag">ВАШ ОТДЕЛ</span><b>Экскурсионный отдел</b><span class="ask">Елена Соколова</span></div>
+    <div><b>Производство и техслужба</b><span class="ask">Игорь Белов</span></div>
+    <div><b>Администрация и HR</b><span class="ask">Ольга Нестерова</span></div>
+    <div><b>Безопасность и охрана труда</b><span class="ask">Сергей Громов</span></div>
+  </div>
+</section>
+
+<section id="s-faq" hidden>
+  <h1>Частые вопросы</h1>
+  <p class="sub">Ответы на то, что спрашивают чаще всего</p>
+  <details><summary>Как получить пропуск?</summary><p>В первый день паспорт нужно предъявить в бюро пропусков у главного входа. Постоянный пропуск выдают в течение дня.</p></details>
+  <details><summary>Во сколько начинается смена и где обед?</summary><p>График вам сообщит наставник. Столовая «Перерыв» работает для сотрудников с 12:00 до 15:00.</p></details>
+  <details><summary>Не могу найти нужное место. Что делать?</summary><p>Откройте карту и нажмите на точку или отсканируйте QR-код рядом с вами. Если не помогло, позвоните наставнику.</p></details>
+  <details><summary>Что делать при травме или происшествии?</summary><p>Сообщите ближайшему коллеге и в центр безопасности, телефон указан на стендах. Подробности есть в инструктаже.</p></details>
+  <details><summary>Нужна ли спецодежда или обувь?</summary><p>В павильоны допускают только в закрытой обуви. Остальное зависит от отдела, это уточните у наставника.</p></details>
+  <details><summary>Как оформить отпуск или больничный?</summary><p>Через отдел персонала, это кабинет 208 в административном корпусе.</p></details>
+  <details><summary>Кому написать, если вопроса здесь нет?</summary><p>Наставнику или в отдел персонала. Контакты есть во вкладке «Команда».</p></details>
+</section>
+
+<p class="demo">Демо-прототип. Имена, места, цифры и задачи — условные примеры.</p>
+</div>
+
+<div class="start" id="start"><div class="in">
+  <div class="logo">МОСКИНО</div>
+  <div><h2>Добро пожаловать, Анна</h2><p>Мы рады, что вы с нами. Здесь вы найдёте всё для первых дней.</p>
+  <div class="facts"><div><span>Отдел</span><b>Экскурсионный</b></div><div><span>Наставник</span><b>Михаил Орлов</b></div><div><span>Первый день</span><b>10 ноября, 10:00</b></div></div></div>
+  <div><button class="startbtn" id="go">Начать</button><div class="ph">Фон — заглушка, здесь будет фото территории</div></div>
+</div></div>
+<nav><div>
+  <button data-t="map" class="on"><span class="i">📍</span>Карта</button>
+  <button data-t="plan"><span class="i">✅</span>План</button>
+  <button data-t="team"><span class="i">👥</span>Команда</button>
+  <button data-t="about"><span class="i">🏛️</span>О парке</button>
+  <button data-t="faq"><span class="i">❓</span>Вопросы</button>
+</div></nav>
+<div class="toast" id="toast"></div>
+
+<script>
+var P=[
+{id:"gate",n:"Главный вход",x:200,y:270,how:"Вход со стороны парковки, бюро пропусков слева от турникетов.",
+ c:[{n:"Бюро пропусков",r:"Пропуск, временные допуски",a:"БП"}]},
+{id:"admin",n:"Административный корпус",x:95,y:90,how:"Прямо от входа, 2 этаж, левое крыло. Кабинет наставника 214.",
+ c:[{n:"Михаил Орлов",r:"Ваш наставник: график, смены, любые вопросы первой недели",a:"МО"},{n:"Отдел персонала",r:"Документы, отпуск, оформление",a:"HR"}]},
+{id:"canteen",n:"Столовая «Перерыв»",x:305,y:230,how:"Направо от главной аллеи, здание с зелёной крышей.",
+ c:[{n:"Администратор столовой",r:"Карта питания, режим работы",a:"АС"}]},
+{id:"safety",n:"Центр безопасности",x:320,y:90,how:"Северная часть, рядом с въездом для служебного транспорта.",
+ c:[{n:"Охрана труда",r:"Инструктаж, аптечка, действия при ЧС",a:"ОТ"}]},
+{id:"pavilion",n:"Павильон «Эпоха»",x:200,y:150,how:"Центр территории. Вход только с пропуском и в закрытой обуви.",
+ c:[{n:"Техническая служба",r:"Доступ в павильоны, оборудование",a:"ТС"},{n:"Елена Соколова",r:"Руководитель отдела: проекты, развитие",a:"ЕС"}]}
+];
+var T=[
+{g:"День 1",p:"gate",t:"Получить пропуск",d:"Возьмите с собой паспорт"},
+{g:"День 1",p:"admin",t:"Познакомиться с наставником",d:"Каб. 214, в 10:00"},
+{g:"День 1",p:"admin",t:"Передать документы в HR",d:"Каб. 208"},
+{g:"День 1",p:"canteen",t:"Активировать карту питания",d:"Касса, в течение дня"},
+{g:"День 1",p:"safety",t:"Вводный инструктаж и тест",d:"Видео 6 минут и 5 вопросов"},
+{g:"Неделя 1",p:"pavilion",t:"Пройти маршрут с наставником",d:"Знакомство с павильонами и правилами доступа"},
+{g:"Неделя 1",p:"admin",t:"Оставить отзыв о первой неделе",d:"Три вопроса, одна минута"},
+{g:"Месяц 1",p:"admin",t:"Итоговая встреча с наставником",d:"Подведение итогов адаптации"}
+];
+var done={},seen={},sel=null;
+function $(i){return document.getElementById(i)}
+function byId(id){for(var i=0;i<P.length;i++)if(P[i].id===id)return P[i]}
+function toast(m){var t=$("toast");t.textContent=m;t.className="toast show";setTimeout(function(){t.className="toast"},2000)}
+function pdone(id){var ok=true,any=false;T.forEach(function(t,i){if(t.p===id){any=true;if(!done[i])ok=false}});return any&&ok}
+function nextPt(){var o=["gate","admin","canteen","safety","pavilion"];for(var i=0;i<o.length;i++)if(!pdone(o[i]))return o[i];return null}
+function tasksHtml(f){var h="";T.forEach(function(t,i){if(f(t))h+='<button class="task'+(done[i]?' done':'')+'" data-i="'+i+'"><span class="chk">✓</span><span><span class="tt">'+t.t+'</span><br><span class="td">'+t.d+'</span></span></button>'});return h}
+function render(){
+  var n=P.filter(function(p){return pdone(p.id)}).length,nx=nextPt();
+  $("bar").style.width=(n/P.length*100)+"%";
+  $("cnt").textContent=n===P.length?"Все точки пройдены. Адаптация завершена.":"Пройдено точек: "+n+" из "+P.length;
+  var g="";P.forEach(function(p,i){
+    g+='<g class="pt'+(pdone(p.id)?' done':'')+(p.id===nx?' next':'')+(p.id===sel?' sel':'')+'" data-id="'+p.id+'"><circle cx="'+p.x+'" cy="'+p.y+'" r="15"/><text x="'+p.x+'" y="'+p.y+'">'+(i+1)+'</text></g>'});
+  $("pts").innerHTML=g;
+  var cur=byId(sel||nx||"gate");
+  var h=(cur.id===nx?'<div class="tag">СЛЕДУЮЩАЯ ТОЧКА</div>':'')+'<h2>'+cur.n+'</h2><div class="td">'+cur.how+'</div>';
+  h+='<div class="lab">Что нужно сделать здесь</div>'+tasksHtml(function(t){return t.p===cur.id});
+  h+='<div class="lab">К кому обратиться</div>';
+  cur.c.forEach(function(c){h+='<div class="per"><div class="av">'+c.a+'</div><div><b>'+c.n+'</b><div class="ask">'+c.r+'</div></div></div>'});
+  h+='<div style="margin-top:12px"><button class="btn2" data-rt="'+cur.id+'">🧭 Маршрут сюда</button></div><div class="qr">QR-код на этой точке открывает эту карточку: …/#'+cur.id+(seen[cur.id]?' · отсканирован ✓':'')+'<br><a href="#'+cur.id+'">Демо: открыть как по QR</a></div>';
+  $("detail").innerHTML=h;
+  var ph="",last="";T.forEach(function(t,i){
+    if(t.g!==last){ph+='<div class="grp">'+t.g+'</div>';last=t.g}
+    ph+='<div class="item">'+tasksHtml(function(x){return x===t})+'<div style="padding:0 0 8px 32px"><span class="chip go" data-go="'+t.p+'">📍 '+byId(t.p).n+'</span></div></div>'});
+  $("plan").innerHTML=ph;
+  var th="";P.forEach(function(p){th+='<div class="grp">'+p.n+'</div><div class="item">';p.c.forEach(function(c){th+='<div class="per"><div class="av">'+c.a+'</div><div><b>'+c.n+'</b><div class="ask">'+c.r+'</div></div></div>'});th+='</div>'});
+  $("team").innerHTML=th;
+}
+function tab(t){
+  document.querySelectorAll("nav button").forEach(function(b){b.classList.toggle("on",b.getAttribute("data-t")===t)});
+  ["map","plan","team","about","faq"].forEach(function(x){$("s-"+x).hidden=x!==t});window.scrollTo(0,0)}
+document.querySelectorAll("nav button").forEach(function(b){b.onclick=function(){tab(b.getAttribute("data-t"))}});
+document.addEventListener("click",function(e){
+  var k=e.target.closest(".task");if(k){var i=k.getAttribute("data-i");done[i]=!done[i];render();return}
+  var c=e.target.closest(".chip.go");if(c){sel=c.getAttribute("data-go");render();tab("map");return}
+  var p=e.target.closest(".pt");if(p){sel=p.getAttribute("data-id");render()}
+});
+function route(){var id=location.hash.slice(1);if(!byId(id))return;
+  $("start").hidden=true;var first=!seen[id];seen[id]=1;sel=id;render();tab("map");
+  if(first)toast("Точка отсканирована: "+byId(id).n)}
+window.addEventListener("hashchange",route);
+$("go").onclick=function(){$("start").hidden=true;window.scrollTo(0,0)};
+var KW={gate:"пропуск вход бюро паспорт",admin:"наставник орлов hr документы отпуск больничный кабинет корпус",canteen:"обед питание еда карта столовая",safety:"инструктаж безопасность охрана аптечка тест",pavilion:"павильон съёмка техслужба доступ соколова"};
+var D={gate:250,admin:300,canteen:200,safety:280,pavilion:0};
+var opts="";P.forEach(function(p){opts+='<option value="'+p.id+'">'+p.n+'</option>'});
+$("from").innerHTML=opts;$("to").innerHTML=opts;$("from").value="gate";$("to").value="admin";
+$("q").oninput=function(){var v=this.value.trim().toLowerCase(),h="";
+  if(v){P.forEach(function(p){var hay=(p.n+" "+KW[p.id]+" "+p.c.map(function(c){return c.n}).join(" ")).toLowerCase();
+    if(hay.indexOf(v)>-1)h+='<button class="sg" data-id="'+p.id+'">📍 '+p.n+'</button>'});
+    if(!h)h='<div class="td" style="padding:8px 2px">Ничего не найдено</div>'}
+  $("sug").innerHTML=h};
+$("sug").onclick=function(e){var b=e.target.closest(".sg");if(!b)return;
+  sel=b.getAttribute("data-id");$("to").value=sel;render();$("sug").innerHTML="";$("q").value=""};
+function buildRoute(){
+  var a=byId($("from").value),b=byId($("to").value),L=$("rline"),I=$("rinfo");
+  if(a===b){L.innerHTML="";I.innerHTML='<div class="card">Вы уже в этой точке.</div>';return}
+  var hub={x:200,y:150},pts=[a],via=a.id!=="pavilion"&&b.id!=="pavilion";
+  if(via)pts.push(hub);pts.push(b);
+  var d=D[a.id]+D[b.id],m=Math.max(1,Math.round(d/80));
+  var st=via?['Выйдите от «'+a.n+'» на главную аллею.','Идите к центральной площади у павильона «Эпоха».','Поверните к «'+b.n+'» и идите до места.']:['От «'+a.n+'» идите по аллее к «'+b.n+'».','На месте вас ждёт табличка с QR-кодом.'];
+  L.innerHTML='<polyline points="'+pts.map(function(p){return p.x+','+p.y}).join(' ')+'" fill="none" stroke="var(--acc)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2 9"/>';
+  I.innerHTML='<div class="card" style="margin:0 0 12px"><b>≈ '+d+' м · около '+m+' мин пешком</b><ol><li>'+st.join('</li><li>')+'</li></ol><button class="btn2 alt" id="rclr">Сбросить маршрут</button></div>';
+  $("rclr").onclick=function(){L.innerHTML="";I.innerHTML=""};
+  sel=b.id;render()}
+$("rtb").onclick=buildRoute;
+document.addEventListener("click",function(e){var r=e.target.closest("[data-rt]");
+  if(r){$("to").value=r.getAttribute("data-rt");buildRoute();window.scrollTo(0,0)}});
+render();route();
+</script>
+</body>
+</html>
